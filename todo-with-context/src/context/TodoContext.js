@@ -6,7 +6,13 @@ export const TodoContext = createContext({
             id: 1,
             todo: "Todo Message",
             complete: false
-        }
+        },
+        {
+            id: 2,
+            todo: "Complete React js",
+            complete: false
+
+        },
     ],
     addTodo: (todo)=>{},
     deleteTodo: (id)=>{},
