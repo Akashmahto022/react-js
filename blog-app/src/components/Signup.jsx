@@ -1,36 +1,35 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { login } from "../store/authSlice";
-import { Button, Logo, Input } from "./index";
-import { useDispatch } from "react-redux";
 import authService from "../appwrite/auth";
+import { useNavigate, Link } from "react-router-dom";
+import { login } from "../store/authSlice";
+import { Input, Logo, Button } from "./index";
+import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 
-const Login = () => {
+const Signup = () => {
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { register, handleSubmit } = useForm();
-  const [error, setError] = useState("");
 
-  const login = async (data) => {
+  const create = async (data) => {
     setError("");
     try {
-      const session = await authService.login(data);
-      if (session) {
+      const userData = await authService.createAccount(data);
+      if (userData) {
         const userData = await authService.getCurrentUser();
         if (userData) {
           dispatch(login(userData));
+          navigate("/");
         }
-        navigate("/");
       }
     } catch (error) {
-      console.log("get error to login");
       setError(error.message);
     }
   };
 
   return (
-    <div className="flex items-center justify-center w-full ">
+    <div className="flex items-center justify-center">
       <div
         className={`mx-auto w-full max-w-lg bg-gray-100 rounded-xl p-10 border border-black/10`}
       >
@@ -51,9 +50,16 @@ const Login = () => {
             Sign Up
           </Link>
         </p>
-        {error && <p className="text-red-500 text-center">{error}</p>}
-        <form className="mt-8" onSubmit={handleSubmit(login)}>
+        {error && <p className="text-red-500 text-center mt-8">{error}</p>}
+        <form onSubmit={handleSubmit(create)}>
           <div className="space-y-5">
+            <Input
+              label="Full Name:"
+              placeholder="Enter your full name"
+              {...register("name", {
+                required: true,
+              })}
+            />
             <Input
               label="Email"
               placeholder="Enter your Email"
@@ -76,8 +82,9 @@ const Login = () => {
                 required: true,
               })}
             />
-            <Button className="w-full" type="submit">
-              Sign in
+            <Button type="submit" className="w-full">
+              {" "}
+              Create Account
             </Button>
           </div>
         </form>
@@ -86,4 +93,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;
